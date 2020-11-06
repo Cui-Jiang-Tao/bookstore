@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tao.bookstore.dao.ICategoryDao">
+
+    <resultMap id="CategoryMap" type="cn.tao.bookstore.domain.Category">
+        <id property="cid" column="cid"/>
+        <result property="cname" column="cname"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="CategoryMap">
+        select * from category
+    </select>
+
+    <select id="findByCid" resultMap="CategoryMap">
+        select * from category where cid=#{cid}
+    </select>
+
+    <select id="findByCname" resultMap="CategoryMap">
+        select * from category where cname=#{cname}
+    </select>
+
+    <update id="add" parameterType="cn.tao.bookstore.domain.Category">
+        insert into category(cid, cname) values (#{cid}, #{cname})
+    </update>
+
+    <update id="deleteByCid" parameterType="java.lang.String">
+        delete from category where cid=#{cid}
+    </update>
+
+    <update id="editCnameByCid" parameterType="cn.tao.bookstore.domain.Category">
+        update category set cname=#{cname} where cid=#{cid}
+    </update>
+</mapper>

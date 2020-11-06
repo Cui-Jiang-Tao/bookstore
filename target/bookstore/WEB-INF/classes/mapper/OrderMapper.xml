@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tao.bookstore.dao.IOrderDao">
+    
+    <resultMap id="OrderMap" type="cn.tao.bookstore.domain.Order">
+        <id property="oid" column="oid"/>
+        <result property="ordertime" column="ordertime"/>
+        <result property="total" column="total"/>
+        <result property="state" column="state"/>
+        <result property="address" column="address"/>
+        <association property="owner" column="uid" select="cn.tao.bookstore.dao.IUserDao.findByUid"/>
+        <association property="orderItemList" column="oid" select="findOrderItemsByOid"/>
+    </resultMap>
+
+    <resultMap id="OrderItemMap" type="cn.tao.bookstore.domain.OrderItem">
+        <id property="iid" column="iid"/>
+        <result property="count" column="count"/>
+        <result property="subtotal" column="subtotal"/>
+        <association property="order" column="oid" select="findOrderByOid"/>
+        <association property="book" column="bid" select="cn.tao.bookstore.dao.IBookDao.findByBid"/>
+    </resultMap>
+
+    <select id="findOrdersByUid" resultMap="OrderMap">
+        select * from orders where uid=#{uid} order by ordertime desc
+    </select>
+
+    <select id="findOrdersByState" resultMap="OrderMap">
+        select * from orders where 1=1
+            <if test="state != null and state != ''">
+                 and state=#{state}
+            </if>
+        order by ordertime desc
+    </select>
+
+    <select id="findOrderByOid" resultMap="OrderMap">
+        select * from orders where oid=#{oid}
+    </select>
+
+    <select id="findOrderByOidAndUid" resultMap="OrderMap">
+        select * from orders where oid=#{oid} and uid=#{uid}
+    </select>
+    
+    <select id="findOrderItemsByOid" resultMap="OrderItemMap">
+        select * from orderitem where oid=#{oid};
+    </select>
+
+    <insert id="addOrder" parameterType="cn.tao.bookstore.domain.Order">
+        insert into orders(oid, ordertime, total, state, uid, address) values (
+            #{oid}, #{ordertime}, #{total}, #{state}, #{owner.uid}, #{address}
+        )
+    </insert>
+    
+    <insert id="addOrderItems" parameterType="java.util.List">
+        insert into orderitem(iid, count, subtotal, oid, bid)
+          values
+        <foreach collection="orderItems" item="item" separator =",">
+            (#{item.iid}, #{item.count}, #{item.subtotal}, #{item.order.oid}, #{item.book.bid})
+        </foreach>
+    </insert>
+
+    <update id="setOrderStateByOid">
+        update orders set state=#{state} where oid=#{oid}
+    </update>
+</mapper>

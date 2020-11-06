@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tao.bookstore.dao.IBookDao">
+    
+    <resultMap id="BookMap" type="cn.tao.bookstore.domain.Book">
+        <id property="bid" column="bid"/>
+        <result property="bname" column="bname"/>
+        <result property="price" column="price"/>
+        <result property="author" column="author"/>
+        <result property="image" column="image"/>
+        <result property="bname" column="bname"/>
+        <result property="del" column="del"/>
+        
+        <association property="category" column="cid" select="cn.tao.bookstore.dao.ICategoryDao.findByCid"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="BookMap">
+        select * from book
+    </select>
+
+    <select id="findAllByConditional" parameterType="java.lang.Boolean" resultMap="BookMap">
+        select * from book where del=#{deleted}
+    </select>
+
+    <select id="findByCategoryByConditional" resultMap="BookMap">
+        select * from book where cid=#{cid} and del=#{deleted}
+    </select>
+
+    <select id="findByCategory" resultMap="BookMap">
+        select * from book where cid=#{cid}
+    </select>
+
+    <select id="findByBid" resultMap="BookMap">
+        select * from book where bid=#{bid}
+    </select>
+
+    <select id="findByBidByConditional" resultMap="BookMap">
+        select * from book where bid=#{bid} and del=#{deleted}
+    </select>
+    
+    <select id="getCountByCid" resultType="java.lang.Integer">
+        select count(*) from book where cid=#{cid}
+    </select>
+
+    <update id="save" parameterType="cn.tao.bookstore.domain.Book">
+        update book set bname=#{bname}, price=#{price}, author=#{author},
+            cid=#{category.cid}, del=#{del}
+        where bid=#{bid}
+    </update>
+</mapper>

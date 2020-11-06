@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tao.bookstore.dao.ICartDao">
+    
+    <resultMap id="CartMap" type="cn.tao.bookstore.domain.Cart">
+        <id property="id" column="id"/>
+        <result property="bid" column="bid"/>
+        <result property="uid" column="uid"/>
+        <result property="count" column="count"/>
+        <association property="book" column="bid" select="cn.tao.bookstore.dao.IBookDao.findByBid"/>
+    </resultMap>
+    
+    <select id="findCartsByUid" resultMap="CartMap">
+           select * from cart where uid=#{uid}
+    </select>
+
+    <!--得到购物车中的唯一条目-->
+    <select id="findCartByUidAndBid" resultMap="CartMap">
+           select * from cart where uid=#{uid} and bid=#{bid}
+    </select>
+
+    <insert id="add" parameterType="cn.tao.bookstore.domain.Cart">
+            insert into cart(id,bid,uid,count) values(#{id},#{bid},#{uid},#{count})
+    </insert>
+
+    <update id="updateCountByUidAndBid">
+        update cart set count=#{count } where uid=#{uid} and bid=#{bid}
+    </update>
+
+    <!--因为2个参数，用注解-->
+    <update id="delete">
+        delete from cart where uid=#{uid} and bid=#{bid}
+    </update>
+
+    <update id="deleteAll" parameterType="java.lang.String">
+        delete from cart where uid=#{uid}
+    </update>
+    
+</mapper>

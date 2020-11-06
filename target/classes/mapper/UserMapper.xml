@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tao.bookstore.dao.IUserDao">
+    
+    <resultMap id="UserMap" type="cn.tao.bookstore.domain.User">
+        <id property="uid" column="uid"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="email" column="email"/>
+        <result property="code" column="code"/>
+        <result property="state" column="state"/>
+    </resultMap>
+    
+    <select id="findByUsername" resultMap="UserMap">
+        select * from tb_user where username=#{username}
+    </select>
+
+    <select id="findByUid" resultMap="UserMap">
+        select * from tb_user where uid=#{uid}
+    </select>
+
+    <select id="findByEmail" resultMap="UserMap">
+        select * from tb_user where email=#{email}
+    </select>
+
+    <select id="findByCode" resultMap="UserMap">
+        select * from tb_user where code=#{code}
+    </select>
+
+    <update id="updateState">
+        update tb_user set state=#{state} where uid=#{uid}
+    </update>
+    
+    <insert id="add" parameterType="cn.tao.bookstore.domain.User">
+        insert into tb_user(uid, username, password, email, code, state)
+        values(#{uid}, #{username}, #{password}, #{email}, #{code}, #{state})
+    </insert>
+
+</mapper>
