@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -14,13 +15,14 @@ public class CartService {
     private ICartDao cartDao;
 
     public double getCartTotal(List<Cart> cartList) {
-        double total = 0.0;
+        //确保不会丢失精准度
+        BigDecimal total = new BigDecimal(0);
 
         for (Cart cart : cartList) {
-            total += cart.getTotal();
+            total = total.add(new BigDecimal(cart.getTotal()));
         }
 
-        return total;
+        return total.doubleValue();
     }
 
     public List<Cart> findCartsByUid(String uid) {
